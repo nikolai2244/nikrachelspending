@@ -111,7 +111,7 @@ async function startServer() {
       res.json(resultObj);
     } catch (error: any) {
       console.error("Gemini API Server Error:", error.message || error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: error.message || "An exception occurred inside the secured Gemini proxy.",
         missingKey: !process.env.GEMINI_API_KEY
       });
@@ -135,7 +135,7 @@ async function startServer() {
 
       let url = `https://docs.google.com/spreadsheets/d/${safeSheetId}/gviz/tq?tqx=out:json&t=${Date.now()}`;
       const targetUrl = (sheetUrl as string) || (sheetId as string);
-      
+
       const gidMatch = targetUrl.match(/[#&?]gid=([0-9]+)/);
       if (gidMatch) {
         url += `&gid=${gidMatch[1]}`;
@@ -196,7 +196,7 @@ async function startServer() {
 
       // Robust extraction of folder ID if full URL was passed
       let safeFolderId = String(folderId).trim();
-      
+
       // Match drive.google.com/drive/folders/ID or drive.google.com/drive/u/0/folders/ID
       const folderMatches = safeFolderId.match(/\/folders\/([a-zA-Z0-9-_]{25,55})/);
       if (folderMatches) {
@@ -305,11 +305,11 @@ async function startServer() {
         }
 
         const contentType = response.headers.get("content-type") || "";
-        
+
         // If we got back text/html, it might have virus scan warning or standard sign-in wall
         if (contentType.includes("text/html")) {
           const html = await response.text();
-          
+
           if (html.includes("ServiceLogin") || html.includes("accounts.google.com") || html.includes("doc-signin")) {
             console.warn(`[Proxy Drive File Stream] ${targetUrl} hit sign-in screen. Trying next...`);
             continue;
@@ -355,7 +355,7 @@ async function startServer() {
     // In case all endpoints fail, we cannot redirect because inside iframe it would crash/fail CORS/sandbox block.
     // Instead, we will stream a visual SVG alert block back as an image indicating sharing needs to be fixed!
     console.error(`[Proxy Drive File Stream] All endpoints failed to render the image for ID: ${fileId}. Check Drive share settings.`);
-    
+
     const errSvg = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
         <rect width="800" height="500" fill="#09090b"/>
@@ -407,3 +407,28 @@ async function startServer() {
 }
 
 startServer();
+export interface AiInsight {
+  summary: string;
+  topSaves: {
+    category: string;
+    tips: string;
+    impact: string; // "High", "Medium", "Low"
+  }[];
+  budgetAlerts: {
+    title: string;
+    description: string;
+    level: 'warning' | 'info' | 'critical';
+  }[];
+  financialScore: number; // 0 - 100 elite score
+}export interface SheetConfig {
+  sheetUrl: string;
+  sheetId: string;
+  apiKey?: string;
+  dateCol: string;
+  categoryCol: string;
+  merchantCol: string;
+  amountCol: string;
+  lastSynced?: string;
+  autoSync: boolean;
+}
+
