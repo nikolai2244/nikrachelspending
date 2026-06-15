@@ -1,0 +1,6 @@
+{
+  "name": "N & R Spending",
+  "description": "An elite private double-entry ledger, custom wealth runway projections, and intimate couple vision board for Nikolai & Rachel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
